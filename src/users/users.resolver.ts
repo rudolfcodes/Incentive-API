@@ -4,7 +4,7 @@ import { UsersService } from './users.service';
 import { CreateUserInput } from './dtos/create-user.dto';
 
 @Resolver(() => User)
-export class UserResolver {
+export class UsersResolver {
   constructor(private readonly usersService: UsersService) {}
 
   @Query(() => [User], { name: 'users' })
@@ -16,6 +16,6 @@ export class UserResolver {
   }
 
   getUsers() {
-    return this.usersService.findAll('companyId');
+    return this.usersService.findAll(1); // Temporary companyId
   }
 }
