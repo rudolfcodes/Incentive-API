@@ -3,6 +3,7 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppService } from './app.service';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
+import { UserResolver } from './graphql/resolvers/UserResolver';
 
 @Module({
   imports: [
@@ -17,6 +18,6 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
       synchronize: true,
     }),
   ],
-  providers: [AppService],
+  providers: [AppService, UserResolver],
 })
 export class AppModule {}
