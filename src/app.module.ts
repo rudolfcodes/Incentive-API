@@ -3,26 +3,32 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppService } from './app.service';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
-import { UserResolver } from './graphql/resolvers/UserResolver';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
-import { UsersService } from './users/users.service';
+import { ConfigModule } from '@nestjs/config';
+import { User } from './users/user.entity';
 
 @Module({
   imports: [
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: 'schema.gql',
+      context: ({ req }) => ({
+        req,
+        companyId: req.user?.companyId ?? null,
+        isAdmin: req.user?.role === 'admin',
+      }),
     }),
     TypeOrmModule.forRoot({
       type: 'sqlite',
       database: 'db.sqlite',
-      entities: [],
+      entities: [User],
       synchronize: true,
     }),
+    ConfigModule.forRoot(),
     AuthModule,
     UsersModule,
   ],
-  providers: [AppService, UserResolver, UsersService],
+  providers: [AppService],
 })
 export class AppModule {}
