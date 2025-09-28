@@ -45,7 +45,7 @@
 - Queries
   - me - returns: { id, email, role, company { id, name } } - returns User
   - plans - list plans for company: [{ id, name, description }] - returns Plan
-  - grants(companyId) - returns: [{ id, quantity, grantDate, vestingMonths, user { id, email }, plan { id, name } }] - returns Grant
+  - grants() - returns: [{ id, quantity, grantDate, vestingMonths, user { id, email }, plan { id, name } }] - returns Grant
   - expenseSchedule(grantId) - returns simple monthly schedule: { grantId, period: "monthly", rows: [{ periodStart, expense, cumulative }] } - returns ExpenseSchedule
 
 - Mutations
