@@ -49,7 +49,7 @@
   - expenseSchedule(grantId) - returns simple monthly schedule: { grantId, period: "monthly", rows: [{ periodStart, expense, cumulative }] } - returns ExpenseSchedule
 
 - Mutations
-  - signIn(email, password) - returns: { cookie }
+  - signIn(email, password)
   - signUpCompany(input: { companyName, adminEmail, password, name }) - returns: AuthPayload
   - signOut - clears cookie
   - createPlan(input) - Input: { name, description? } - Output: { id, name }
