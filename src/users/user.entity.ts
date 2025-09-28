@@ -20,9 +20,9 @@ export class User {
   @Column({ nullable: true })
   role?: 'admin' | 'user';
 
-  @Field()
+  @Field((type) => Int)
   @Column()
-  companyId: string;
+  companyId: number;
 
   @HideField()
   @Column()
