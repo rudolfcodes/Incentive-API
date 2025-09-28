@@ -4,6 +4,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppService } from './app.service';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { UserResolver } from './graphql/resolvers/UserResolver';
+import { AuthModule } from './auth/auth.module';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -17,6 +19,8 @@ import { UserResolver } from './graphql/resolvers/UserResolver';
       entities: [],
       synchronize: true,
     }),
+    AuthModule,
+    UsersModule,
   ],
   providers: [AppService, UserResolver],
 })
