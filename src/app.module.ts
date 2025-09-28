@@ -6,6 +6,7 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { UserResolver } from './graphql/resolvers/UserResolver';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
+import { UsersService } from './users/users.service';
 
 @Module({
   imports: [
@@ -22,6 +23,6 @@ import { UsersModule } from './users/users.module';
     AuthModule,
     UsersModule,
   ],
-  providers: [AppService, UserResolver],
+  providers: [AppService, UserResolver, UsersService],
 })
 export class AppModule {}
