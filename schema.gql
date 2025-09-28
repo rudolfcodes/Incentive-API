@@ -8,9 +8,30 @@ type User {
   name: String!
   email: String!
   role: String!
-  companyId: String!
+  companyId: Int!
+}
+
+type AuthResponse {
+  accessToken: String!
 }
 
 type Query {
-  users: [User!]!
+  getUsers: [User!]!
+}
+
+type Mutation {
+  login(authInput: AuthInput!): AuthResponse!
+  createUser(createUserInput: CreateUserInput!): User!
+}
+
+input AuthInput {
+  email: String!
+  password: String!
+}
+
+input CreateUserInput {
+  name: String!
+  email: String!
+  password: String!
+  companyId: Float
 }
