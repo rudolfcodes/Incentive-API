@@ -1,21 +1,26 @@
-import { Args, Resolver, Query, Mutation } from '@nestjs/graphql';
+import { Args, Resolver, Query, Mutation, Context } from '@nestjs/graphql';
+import { UseGuards } from '@nestjs/common';
 import { User } from 'src/users/user.entity';
 import { UsersService } from './users.service';
 import { CreateUserInput } from './dtos/create-user.dto';
+import { GqlAuthGuard } from 'src/auth/gql-auth.guard';
 
-@Resolver(() => User)
+@Resolver((of) => User)
+//@UseGuards(GqlAuthGuard)
 export class UsersResolver {
   constructor(private readonly usersService: UsersService) {}
 
-  @Query(() => [User], { name: 'users' })
   @Mutation(() => User)
   async createUser(
     @Args('createUserInput') createUserInput: CreateUserInput,
+    @Context() ctx: { companyId?: number; isAdmin?: boolean },
   ): Promise<User> {
-    return this.usersService.create(createUserInput);
+    return this.usersService.create(createUserInput, ctx);
   }
 
-  getUsers() {
-    return this.usersService.findAll(1); // Temporary companyId
+  @Query(() => [User])
+  async getUsers(@Context() ctx: { companyId?: number; isAdmin?: boolean }) {
+    if (!ctx.companyId) return [];
+    return this.usersService.findAll(ctx.companyId);
   }
 }
