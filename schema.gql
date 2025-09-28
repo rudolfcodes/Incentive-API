@@ -1,0 +1,16 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+"""User entity"""
+type User {
+  id: Int!
+  name: String!
+  email: String!
+  role: String!
+  companyId: String!
+}
+
+type Query {
+  users: [User!]!
+}
