@@ -96,7 +96,7 @@
   - create
   - update
   - delete
-    ReportsService
+- ReportsService
   - expenseSchedule
   - fetchGrant
   - total
