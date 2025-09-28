@@ -1,5 +1,12 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
 import { Field, HideField, Int, ObjectType } from '@nestjs/graphql';
+import { Company } from 'src/companies/company.entity';
 
 @ObjectType({ description: 'User entity' })
 @Entity()
@@ -20,7 +27,10 @@ export class User {
   @Column({ nullable: true })
   role?: 'admin' | 'user';
 
-  @Field((type) => Int)
+  @ManyToOne(() => Company, (company) => company.users, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'companyId' })
+  company: Company;
+
   @Column()
   companyId: number;
 

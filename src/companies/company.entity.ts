@@ -1,4 +1,11 @@
-import { Entity, PrimaryGeneratedColumn, Column, Index } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  Index,
+  OneToMany,
+} from 'typeorm';
+import { User } from 'src/users/user.entity';
 
 @Entity()
 export class Company {
@@ -42,4 +49,8 @@ export class Company {
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   deletedAt: Date;
+
+  // Relations
+  @OneToMany(() => User, (user) => user.company)
+  users: User[];
 }
