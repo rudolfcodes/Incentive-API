@@ -12,6 +12,11 @@ export class CreateUserInput {
   @Field()
   @IsString()
   @IsNotEmpty()
+  name: string;
+
+  @Field()
+  @IsString()
+  @IsNotEmpty()
   @IsEmail()
   email: string;
 
@@ -21,7 +26,7 @@ export class CreateUserInput {
   @MinLength(6)
   password: string;
 
-  @Field()
+  @Field({ nullable: true })
   @IsInt()
   companyId?: number;
 }
