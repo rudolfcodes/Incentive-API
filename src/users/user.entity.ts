@@ -17,8 +17,8 @@ export class User {
   email: string;
 
   @Field()
-  @Column()
-  role: string;
+  @Column({ nullable: true })
+  role?: 'admin' | 'user';
 
   @Field()
   @Column()
