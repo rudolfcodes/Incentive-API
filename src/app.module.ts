@@ -7,6 +7,7 @@ import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { ConfigModule } from '@nestjs/config';
 import { User } from './users/user.entity';
+import { CompaniesModule } from './companies/companies.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { User } from './users/user.entity';
     ConfigModule.forRoot(),
     AuthModule,
     UsersModule,
+    CompaniesModule,
   ],
   providers: [AppService],
 })
