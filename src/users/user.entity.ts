@@ -27,6 +27,8 @@ export class User {
   @Column({ nullable: true })
   role?: 'admin' | 'user';
 
+  // companyId is how we link users to companies
+  // JoinColumn specifies that the foreign key is companyId
   @ManyToOne(() => Company, (company) => company.users, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'companyId' })
   company: Company;
