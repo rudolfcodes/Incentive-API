@@ -13,7 +13,6 @@ export class AuthResolver {
 
   @Mutation(() => AuthResponse)
   async login(@Args('authInput') authInput: AuthInput): Promise<AuthResponse> {
-    // Validate user credentials
     const user = await this.authService.validateUser(
       authInput.email,
       authInput.password,
