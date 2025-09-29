@@ -20,6 +20,7 @@ import { CompaniesModule } from './companies/companies.module';
         userId: req.user?.sub ?? null,
         companyId: req.user?.companyId ?? null,
         isAdmin: req.user?.role === 'admin',
+        isSuperAdmin: req.user?.role === 'super_admin',
       }),
     }),
     TypeOrmModule.forRoot({
