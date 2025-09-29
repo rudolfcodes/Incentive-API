@@ -7,7 +7,7 @@ import {
   JoinColumn,
 } from 'typeorm';
 import { ObjectType, Field, Int, ID } from '@nestjs/graphql';
-import { Company } from 'src/companies/company.entity';
+import { Company } from '../companies/company.entity';
 
 @ObjectType({ description: 'Plan entity' })
 @Entity()
