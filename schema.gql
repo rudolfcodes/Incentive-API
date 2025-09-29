@@ -2,6 +2,25 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+"""Plan entity"""
+type Plan {
+  id: ID!
+  name: String!
+  totalShares: Int!
+  type: String!
+  description: String!
+  status: String!
+  companyId: Float!
+  startDate: DateTime!
+  endDate: DateTime!
+  expiresAt: DateTime
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
 """Company entity"""
 type Company {
   id: Int!
@@ -20,11 +39,6 @@ type Company {
   deletedAt: DateTime
 }
 
-"""
-A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
-"""
-scalar DateTime
-
 """User entity"""
 type User {
   id: Int!
@@ -42,12 +56,15 @@ type Query {
   getCompanies: [Company!]!
   getCompanyById(id: Float!): Company
   myCompany: Company
+  getPlans: [Plan!]!
+  getPlanById(id: Float!): Plan
 }
 
 type Mutation {
   login(authInput: AuthInput!): AuthResponse!
   createUser(createUserInput: CreateUserInput!): User!
   createCompany(createCompanyInput: CreateCompanyInput!): Company!
+  createPlan(createPlanInput: CreatePlanDto!): Plan!
 }
 
 input AuthInput {
@@ -74,4 +91,16 @@ input CompanyLocationInput {
   city: String!
   postalCode: String!
   country: String!
+}
+
+input CreatePlanDto {
+  name: String!
+  type: String!
+  totalShares: Float!
+  description: String
+  status: String!
+  companyId: Float!
+  startDate: DateTime
+  endDate: DateTime
+  expiresAt: DateTime
 }
