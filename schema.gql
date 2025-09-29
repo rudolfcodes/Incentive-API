@@ -2,13 +2,35 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+"""Company entity"""
+type Company {
+  id: Int!
+  name: String!
+  slug: String!
+  address: String!
+  phone: String!
+  ownerId: Int!
+  status: String!
+  currency: String!
+  locale: String!
+  isActive: Boolean!
+  timezone: String!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  deletedAt: DateTime
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
 """User entity"""
 type User {
   id: Int!
   name: String!
   email: String!
   role: String!
-  companyId: Int!
 }
 
 type AuthResponse {
@@ -17,11 +39,15 @@ type AuthResponse {
 
 type Query {
   getUsers: [User!]!
+  getCompanies: [Company!]!
+  getCompanyById(id: Float!): Company
+  myCompany: Company
 }
 
 type Mutation {
   login(authInput: AuthInput!): AuthResponse!
   createUser(createUserInput: CreateUserInput!): User!
+  createCompany(createCompanyInput: CreateCompanyInput!): Company!
 }
 
 input AuthInput {
@@ -34,4 +60,17 @@ input CreateUserInput {
   email: String!
   password: String!
   companyId: Float
+}
+
+input CreateCompanyInput {
+  name: String!
+  slug: String
+  location: CompanyLocationInput
+}
+
+input CompanyLocationInput {
+  address: String!
+  city: String!
+  postalCode: String!
+  country: String!
 }
