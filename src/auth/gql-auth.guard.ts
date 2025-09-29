@@ -16,7 +16,6 @@ export class SuperAdminGuard extends GqlAuthGuard {
     // First, run the JWT authentication
     const isAuthenticated = await super.canActivate(context);
     if (!isAuthenticated) {
-      console.log('SuperAdminGuard - Authentication failed');
       return false;
     }
 
@@ -24,10 +23,8 @@ export class SuperAdminGuard extends GqlAuthGuard {
     const ctx = GqlExecutionContext.create(context);
     const req = ctx.getContext().req;
     const user = req.user;
-    console.log('SuperAdminGuard - User:', user); // 👈 Debug log
 
     const isSuperAdmin = user && user.role === 'super_admin';
-    console.log('SuperAdminGuard - Is Super Admin:', isSuperAdmin);
     return isSuperAdmin;
   }
 }
