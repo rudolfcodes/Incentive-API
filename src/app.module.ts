@@ -7,6 +7,7 @@ import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { ConfigModule } from '@nestjs/config';
 import { User } from './users/user.entity';
+import { Company } from './companies/company.entity';
 import { CompaniesModule } from './companies/companies.module';
 
 @Module({
@@ -16,6 +17,7 @@ import { CompaniesModule } from './companies/companies.module';
       autoSchemaFile: 'schema.gql',
       context: ({ req }) => ({
         req,
+        userId: req.user?.sub ?? null,
         companyId: req.user?.companyId ?? null,
         isAdmin: req.user?.role === 'admin',
       }),
@@ -23,7 +25,7 @@ import { CompaniesModule } from './companies/companies.module';
     TypeOrmModule.forRoot({
       type: 'sqlite',
       database: 'db.sqlite',
-      entities: [User],
+      entities: [User, Company],
       synchronize: true,
     }),
     ConfigModule.forRoot(),
