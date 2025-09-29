@@ -5,7 +5,7 @@ import { CreateCompanyInput } from './dtos/create-company-input.dto';
 import { UseGuards } from '@nestjs/common';
 import { GqlAuthGuard, SuperAdminGuard } from 'src/auth/gql-auth.guard';
 
-@Resolver((of) => Company)
+@Resolver(() => Company)
 export class CompaniesResolver {
   constructor(private readonly companiesService: CompaniesService) {}
 
