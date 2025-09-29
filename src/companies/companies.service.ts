@@ -1,14 +1,44 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { Company } from './company.entity';
 import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+import { UsersService } from 'src/users/users.service';
 
 @Injectable()
 export class CompaniesService {
-  constructor(private readonly companiesRepository: Repository<Company>) {}
+  constructor(
+    @InjectRepository(Company)
+    private readonly companiesRepository: Repository<Company>,
+    private readonly usersService: UsersService,
+  ) {}
 
-  // Only system admins should be able to create companies
   async create(companyData: Partial<Company>): Promise<Company> {
-    const newCompany = this.companiesRepository;
+    try {
+      if (!companyData.name || companyData.name.trim() === '') {
+        throw new InternalServerErrorException('Company name is required');
+      }
+
+      const existingCompany = await this.companiesRepository.findOneBy({
+        name: companyData.name,
+      });
+      if (existingCompany) {
+        throw new InternalServerErrorException(
+          'Company with this name already exists',
+        );
+      }
+
+      const newCompany = this.companiesRepository.create({
+        ...companyData,
+        isActive: companyData.isActive ?? true,
+        timezone: companyData.timezone ?? 'UTC',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      });
+
+      return await this.companiesRepository.save(newCompany);
+    } catch (error) {
+      throw new InternalServerErrorException('Failed to create company');
+    }
   }
 
   async findAll(): Promise<Company[]> {
@@ -19,5 +49,9 @@ export class CompaniesService {
     return this.companiesRepository.findOneBy({ id });
   }
 
-  async myCompany(): Promise<Company | null> {}
+  async myCompany(userId: number): Promise<Company | null> {
+    const currentUser = await this.usersService.findById(userId);
+    if (!currentUser) return null;
+    return this.companiesRepository.findOneBy({ id: currentUser.companyId });
+  }
 }
