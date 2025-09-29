@@ -29,4 +29,8 @@ export class CreateUserInput {
   @Field({ nullable: true })
   @IsInt()
   companyId?: number;
+
+  @Field({ nullable: true })
+  @IsString()
+  role?: 'admin' | 'user' | 'super_admin';
 }

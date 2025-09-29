@@ -25,16 +25,19 @@ export class User {
 
   @Field()
   @Column({ nullable: true })
-  role?: 'admin' | 'user';
+  role?: 'admin' | 'user' | 'super_admin';
 
   // companyId is how we link users to companies
   // JoinColumn specifies that the foreign key is companyId
-  @ManyToOne(() => Company, (company) => company.users, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Company, (company) => company.users, {
+    onDelete: 'CASCADE',
+    nullable: true,
+  })
   @JoinColumn({ name: 'companyId' })
   company: Company;
 
-  @Column()
-  companyId: number;
+  @Column({ nullable: true })
+  companyId: number | null;
 
   @HideField()
   @Column()

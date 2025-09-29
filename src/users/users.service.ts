@@ -12,33 +12,53 @@ export class UsersService {
     @InjectRepository(User) private usersRepository: Repository<User>,
   ) {}
 
+  async userExists(email: string): Promise<boolean> {
+    const user = await this.usersRepository.findOneBy({ email });
+    return !!user;
+  }
+
   async create(
     createUserDto: CreateUserInput,
-    ctx: { companyId?: number; isAdmin?: boolean },
+    ctx: { companyId?: number; isAdmin?: boolean; isSuperAdmin?: boolean },
   ): Promise<User> {
-    const companyId = createUserDto.companyId ?? ctx.companyId;
-    if (!companyId) {
-      throw new NotFoundException('Company ID must be provided');
+    let assignedRole: 'super_admin' | 'admin' | 'user';
+    let assignedCompanyId: number | null;
+
+    if (ctx.isSuperAdmin) {
+      assignedRole = createUserDto.role || 'user';
+      assignedCompanyId = createUserDto.companyId || null;
+    } else if (ctx.isAdmin) {
+      assignedRole = 'user';
+      assignedCompanyId = ctx.companyId || null;
+    } else {
+      throw new NotFoundException('Only admins can create users');
     }
 
-    const existingUser = await this.usersRepository.findOneBy({
-      email: createUserDto.email,
-    });
-    if (existingUser) {
+    if (!ctx.isSuperAdmin && !ctx.companyId) {
+      throw new NotFoundException(
+        'Company ID must be provided for non-super admins',
+      );
+    }
+
+    if (await this.userExists(createUserDto.email)) {
       throw new NotFoundException('User with this email already exists');
     }
+
     const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
     const newUser = this.usersRepository.create({
       ...createUserDto,
-      companyId,
-      role: ctx.isAdmin ? 'admin' : 'user',
+      companyId: assignedCompanyId,
+      role: assignedRole,
       password: hashedPassword,
     });
-    return this.usersRepository.save(newUser);
+    return await this.usersRepository.save(newUser);
   }
 
-  findAll(companyId: number) {
-    return this.usersRepository.find({ where: { companyId } });
+  findAll(companyId?: number) {
+    if (companyId) {
+      return this.usersRepository.find({ where: { companyId } });
+    }
+    return this.usersRepository.find();
   }
 
   findById(id: number) {
