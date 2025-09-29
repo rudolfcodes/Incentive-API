@@ -9,6 +9,7 @@ import { ConfigModule } from '@nestjs/config';
 import { User } from './users/user.entity';
 import { Company } from './companies/company.entity';
 import { CompaniesModule } from './companies/companies.module';
+import { PlansModule } from './plans/plans.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { CompaniesModule } from './companies/companies.module';
     AuthModule,
     UsersModule,
     CompaniesModule,
+    PlansModule,
   ],
   providers: [AppService],
 })
