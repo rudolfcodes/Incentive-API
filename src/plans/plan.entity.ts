@@ -79,7 +79,7 @@ export class Plan {
 
   @Field({ nullable: true })
   @Column({ type: 'datetime', nullable: true })
-  expiresAt: Date | null;
+  expiresAt: Date;
 
   @Field(() => Int)
   @Column()
