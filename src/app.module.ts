@@ -8,6 +8,7 @@ import { UsersModule } from './users/users.module';
 import { ConfigModule } from '@nestjs/config';
 import { User } from './users/user.entity';
 import { Company } from './companies/company.entity';
+import { Plan } from './plans/plan.entity';
 import { CompaniesModule } from './companies/companies.module';
 import { PlansModule } from './plans/plans.module';
 
@@ -27,7 +28,7 @@ import { PlansModule } from './plans/plans.module';
     TypeOrmModule.forRoot({
       type: 'sqlite',
       database: 'db.sqlite',
-      entities: [User, Company],
+      entities: [User, Company, Plan],
       synchronize: true,
     }),
     ConfigModule.forRoot(),
