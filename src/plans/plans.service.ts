@@ -27,10 +27,10 @@ export class PlansService {
       throw new Error(`Failed to create plan: ${error.message}`);
     }
   }
-  async findAll(): Promise<Plan[]> {
-    return this.plansRepository.find();
+  async findAll(companyId: number): Promise<Plan[]> {
+    return this.plansRepository.find({ where: { companyId } });
   }
-  async findPlanById(id: number): Promise<Plan | null> {
-    return this.plansRepository.findOneBy({ id });
+  async findPlanById(planId: number, companyId: number): Promise<Plan | null> {
+    return this.plansRepository.findOneBy({ id: planId, companyId });
   }
 }

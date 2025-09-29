@@ -21,13 +21,18 @@ export class PlansResolver {
 
   @Query(() => [Plan])
   @UseGuards(GqlAuthGuard)
-  async getPlans(): Promise<Plan[]> {
-    return this.plansService.findAll();
+  async getPlans(@Context() ctx: { req: any }): Promise<Plan[]> {
+    const companyId = ctx.req?.user?.companyId;
+    return this.plansService.findAll(companyId);
   }
 
   @Query(() => Plan, { nullable: true })
   @UseGuards(GqlAuthGuard)
-  async getPlanById(@Args('id') id: number): Promise<Plan | null> {
-    return this.plansService.findPlanById(id);
+  async getPlanById(
+    @Args('id') id: number,
+    @Context() ctx: { req: any },
+  ): Promise<Plan | null> {
+    const companyId = ctx.req?.user?.companyId;
+    return this.plansService.findPlanById(id, companyId);
   }
 }
