@@ -7,12 +7,12 @@ type Company {
   id: Int!
   name: String!
   slug: String!
-  address: String!
-  phone: String!
-  ownerId: Int!
+  address: String
+  phone: String
+  ownerId: Int
   status: String!
   currency: String!
-  locale: String!
+  locale: String
   isActive: Boolean!
   timezone: String!
   createdAt: DateTime!
@@ -60,6 +60,7 @@ input CreateUserInput {
   email: String!
   password: String!
   companyId: Float
+  role: String
 }
 
 input CreateCompanyInput {
