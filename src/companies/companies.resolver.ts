@@ -31,8 +31,12 @@ export class CompaniesResolver {
 
   @Query(() => Company, { nullable: true })
   @UseGuards(GqlAuthGuard)
-  async myCompany(@Context() ctx: { userId: number }): Promise<Company | null> {
-    const { userId } = ctx;
+  async myCompany(@Context() ctx: { req: any }): Promise<Company | null> {
+    const userId = ctx.req?.user?.sub;
+    if (!userId) {
+      throw new Error('User ID not found in context');
+    }
+
     return this.companiesService.myCompany(userId);
   }
 }

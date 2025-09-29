@@ -13,13 +13,21 @@ export class UsersResolver {
   @Mutation(() => User)
   async createUser(
     @Args('createUserInput') createUserInput: CreateUserInput,
-    @Context() ctx: { companyId?: number; isAdmin?: boolean },
+    @Context()
+    ctx: { companyId?: number; isSuperAdmin: boolean; isAdmin?: boolean },
   ): Promise<User> {
     return this.usersService.create(createUserInput, ctx);
   }
 
   @Query(() => [User])
-  async getUsers(@Context() ctx: { companyId?: number; isAdmin?: boolean }) {
+  async getUsers(
+    @Context()
+    ctx: {
+      companyId?: number;
+      isAdmin?: boolean;
+      isSuperAdmin: boolean;
+    },
+  ) {
     if (!ctx.companyId) return [];
     return this.usersService.findAll(ctx.companyId);
   }
