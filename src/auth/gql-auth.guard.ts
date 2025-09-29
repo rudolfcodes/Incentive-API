@@ -9,3 +9,13 @@ export class GqlAuthGuard extends AuthGuard('jwt') {
     return ctx.getContext().req;
   }
 }
+
+@Injectable()
+export class SuperAdminGuard extends GqlAuthGuard {
+  canActivate(context: ExecutionContext): boolean {
+    const ctx = GqlExecutionContext.create(context);
+    const req = ctx.getContext().req;
+    const user = req.user;
+    return user && user.role === 'super_admin';
+  }
+}
