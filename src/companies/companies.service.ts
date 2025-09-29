@@ -37,7 +37,10 @@ export class CompaniesService {
 
       return await this.companiesRepository.save(newCompany);
     } catch (error) {
-      throw new InternalServerErrorException('Failed to create company');
+      console.log('Company creation error:', error); // 👈 Debug log
+      throw new InternalServerErrorException(
+        `Failed to create company: ${error.message}`,
+      );
     }
   }
 
@@ -52,6 +55,8 @@ export class CompaniesService {
   async myCompany(userId: number): Promise<Company | null> {
     const currentUser = await this.usersService.findById(userId);
     if (!currentUser) return null;
-    return this.companiesRepository.findOneBy({ id: currentUser.companyId });
+    return this.companiesRepository.findOneBy({
+      id: currentUser.companyId as number,
+    });
   }
 }

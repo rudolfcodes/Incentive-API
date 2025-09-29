@@ -24,16 +24,16 @@ export class Company {
   @Column({ unique: true, length: 88 })
   slug: string;
 
-  @Field()
-  @Column()
+  @Field({ nullable: true })
+  @Column({ nullable: true })
   address: string;
 
-  @Field()
-  @Column()
+  @Field({ nullable: true })
+  @Column({ nullable: true })
   phone: string;
 
-  @Field(() => Int)
-  @Column()
+  @Field(() => Int, { nullable: true })
+  @Column({ nullable: true })
   ownerId: number;
 
   @Field(() => String)
@@ -44,8 +44,8 @@ export class Company {
   @Column({ length: 3, default: 'USD' })
   currency: string;
 
-  @Field(() => String)
-  @Column()
+  @Field(() => String, { nullable: true })
+  @Column({ nullable: true })
   locale: string;
 
   @Field(() => Boolean)
