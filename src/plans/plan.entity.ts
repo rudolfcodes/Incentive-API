@@ -6,37 +6,8 @@ import {
   Index,
   JoinColumn,
 } from 'typeorm';
-import { ObjectType, Field, Int, registerEnumType, ID } from '@nestjs/graphql';
+import { ObjectType, Field, Int, ID } from '@nestjs/graphql';
 import { Company } from 'src/companies/company.entity';
-
-export enum PlanType {
-  OPTION_ISO = 'OPTION_ISO',
-  OPTION_NSO = 'OPTION_NSO',
-  RSU = 'RSU',
-  PSU = 'PSU',
-  RSA = 'RSA',
-}
-export enum PlanStatus {
-  ACTIVE = 'ACTIVE',
-  INACTIVE = 'INACTIVE',
-  EXPIRED = 'EXPIRED',
-  COMPLETED = 'COMPLETED',
-}
-export enum VestInterval {
-  MONTHLY = 'MONTHLY',
-  QUARTERLY = 'QUARTERLY',
-  ANNUAL = 'ANNUAL',
-}
-
-registerEnumType(PlanType, {
-  name: 'PlanType',
-});
-registerEnumType(PlanStatus, {
-  name: 'PlanStatus',
-});
-registerEnumType(VestInterval, {
-  name: 'VestInterval',
-});
 
 @ObjectType({ description: 'Plan entity' })
 @Entity()
@@ -49,17 +20,21 @@ export class Plan {
   @Column({ length: 160 })
   name: string;
 
-  @Field(() => PlanType)
+  @Field(() => Int)
   @Column()
-  type: PlanType;
+  totalShares: number;
+
+  @Field()
+  @Column({ type: 'varchar', length: 20, default: 'RSU' })
+  type: 'RSU' | 'OPTION_ISO' | 'OPTION_NSO' | 'PSU' | 'RSA';
 
   @Field((type) => String)
-  @Column()
-  description: string;
+  @Column({ nullable: true })
+  description?: string;
 
-  @Field(() => PlanStatus)
-  @Column({ default: PlanStatus.ACTIVE })
-  status: PlanStatus;
+  @Field()
+  @Column({ type: 'varchar', length: 20, default: 'ACTIVE' })
+  status: 'ACTIVE' | 'INACTIVE' | 'EXPIRED' | 'COMPLETED';
 
   @Field()
   @Index()
@@ -70,18 +45,14 @@ export class Plan {
   company: Company;
 
   @Field(() => Date)
-  @Column({ type: 'datetime' })
-  startDate: Date;
+  @Column({ type: 'datetime', nullable: true })
+  startDate?: Date;
 
   @Field(() => Date)
-  @Column({ type: 'datetime' })
-  endDate: Date;
+  @Column({ type: 'datetime', nullable: true })
+  endDate?: Date;
 
   @Field({ nullable: true })
   @Column({ type: 'datetime', nullable: true })
-  expiresAt: Date;
-
-  @Field(() => Int)
-  @Column()
-  totalShares: number;
+  expiresAt?: Date;
 }
