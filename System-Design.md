@@ -83,6 +83,7 @@
 ### Services
 
 - AuthService
+- CompaniesService
 - UsersService
   - list
   - findById
