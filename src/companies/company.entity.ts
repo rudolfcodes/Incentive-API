@@ -5,8 +5,9 @@ import {
   Index,
   OneToMany,
 } from 'typeorm';
-import { User } from 'src/users/user.entity';
+import { User } from '../users/user.entity';
 import { ObjectType, Int, Field } from '@nestjs/graphql';
+import { Plan } from '../plans/plan.entity';
 
 @ObjectType({ description: 'Company entity' })
 @Entity()
@@ -74,4 +75,7 @@ export class Company {
   // Relations
   @OneToMany(() => User, (user) => user.company)
   users: User[];
+
+  @OneToMany(() => Plan, (plan) => plan.company)
+  plans: Plan[];
 }

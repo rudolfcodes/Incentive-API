@@ -1,98 +1,106 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Incentive API Design
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+## What the App should do
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+1. Create a plan
+2. Give a grant to a user under a plan
+3. List plans and grants
+4. Enforce basic rules
 
-## Description
+- Only logged in users can create things
+- Users belong to a tenant/company; they only see their own tenant's data
+- Inputs are validated
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+5. GraphQL is used to expose the data
 
-## Project setup
+### Entities
 
-```bash
-$ npm install
-```
+1. Company / Tenant
 
-## Compile and run the project
+- Why: Multi-tenant isolation so Company A can't see Company B
+- Columns: id, name
 
-```bash
-# development
-$ npm run start
+2. User
 
-# watch mode
-$ npm run start:dev
+- Why: who logs in and owns grants
+- Columns: id, email, name, role(admin/employee), companyId
 
-# production mode
-$ npm run start:prod
-```
+3. Plan
 
-## Run tests
+- Why: rulebook under which you grant equity
+- Columns: id, name, description, companyId, defaultVestingMonths
 
-```bash
-# unit tests
-$ npm run test
+4. Grant
 
-# e2e tests
-$ npm run test:e2e
+- Why: actual award to a user
+- Columns: id, userId, planId, quantity, grantDate, vestingMonths, fairValuePerUnit
 
-# test coverage
-$ npm run test:cov
-```
+5. AuditLog - For future
 
-## Deployment
+- Why: who did what, when
+- Columns: id, actorUserId, companyId, action(e.g. CREATE GRANT), entity(e.g. GRANT), entityId, before, after, timestamp
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+### GraphQL
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+- Queries
+  - me - returns: { id, email, role, company { id, name } } - returns User
+  - company - returns: Company
+  - plans - list plans for company: [{ id, name, description }] - returns Plan
+  - grants() - returns: [{ id, quantity, grantDate, vestingMonths, user { id, email }, plan { id, name } }] - returns Grant
+  - expenseSchedule(grantId) - returns simple monthly schedule: { grantId, period: "monthly", rows: [{ periodStart, expense, cumulative }] } - returns ExpenseSchedule
 
-```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
-```
+- Mutations
+  - signIn(email, password)
+  - signUpCompany(input: { companyName, adminEmail, password, name }) - returns: AuthPayload
+  - signOut - clears cookie
+  - createPlan(input) - Input: { name, description? } - Output: { id, name }
+  - createGrant(input) - Input: { userId, planId, quantity, grantDate, vestingMonths, fairValuePerUnit } - Output: { id }
+  - updatePlan(id, input)
+  - deletePlan(id)
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+- Future mutations
+  - updateGrant(id, input)
+  - deleteGrant(id)
 
-## Resources
+### Modules
 
-Check out a few resources that may come in handy when working with NestJS:
+- AppModule
+- AuthModule
+  - Guard to block mutations without login. checks role === 'admin'
+  - roles live here
+- CompaniesModule
+  - Mostly used to verify companyId references.
+- UsersModule
+- PlansModule
+  - CRUD plans
+  - Validation on inputs
+- GrantsModule
+  - CRUD grants
+  - Validates userId and planId belong to the same tenant.
+- ReportsModule
+  - expenseSchedule(grantId) logic (even split per month).
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+### Services
 
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+- AuthService
+- CompaniesService
+- UsersService
+  - list
+  - findById
+- PlansService
+  - list
+  - create
+  - update
+  - delete
+- GrantsService
+  - list
+  - create
+  - update
+  - delete
+- ReportsService
+  - expenseSchedule
+  - fetchGrant
+  - total
+  - vestingMonths
+- AuditLogService
+  - record
